@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.StaticDAO">
+	<select id="selectStandByStatic" resultType="com.inzent.ecm.vo.StaticVO">
+		SELECT CLASSIFICATION AS classification, STATUS AS status, COUNT(1) AS count
+		FROM XCSM_STANDBY
+		GROUP BY CLASSIFICATION, STATUS
+	</select>
+	
+	<select id="selectElementStatic" parameterType="com.inzent.ecm.vo.StaticVO" resultType="com.inzent.ecm.vo.StaticVO">
+		SELECT
+		    COUNT(CASE WHEN STATUS >= '00' THEN 1 END) AS targetCount,
+		    COUNT(CASE WHEN STATUS >= '01' THEN 1 END) AS processCount,
+		    COUNT(CASE WHEN STATUS = '00' THEN 1 END) AS waitCount,
+		    COUNT(CASE WHEN STATUS = '01' THEN 1 END) AS successCount,
+		    COUNT(CASE WHEN STATUS > '01' THEN 1 END) AS failCount 
+		FROM XCSM_ELEMENT
+		WHERE 1=1
+		AND PROCESSDATE BETWEEN #{startDay} AND #{endDay}
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		
+	</select>
+	
+	<select id="selectDayElementStatic" parameterType="map" resultType="com.inzent.ecm.vo.StaticVO">
+		SELECT SUBSTR(STATDATE, 1, 8) AS statDate, 
+		NVL(SUM(CASE WHEN STATUS >= '00' THEN COUNT END), 0) AS targetCount,
+		NVL(SUM(CASE WHEN STATUS >= '01' THEN COUNT END), 0) AS processCount,
+		NVL(SUM(CASE WHEN STATUS = '00' THEN COUNT END), 0) AS waitCount,
+		NVL(SUM(CASE WHEN STATUS = '01' THEN COUNT END), 0) AS successCount,
+		NVL(SUM(CASE WHEN STATUS > '01' THEN COUNT END), 0) AS failCount
+		FROM XCSM_STATIC
+		WHERE 1=1
+		AND STATDATE BETWEEN #{startDay} AND #{endDay}
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		AND STATDATE IS NOT NULL
+		GROUP BY SUBSTR(STATDATE, 1, 8)
+		ORDER BY STATDATE DESC
+	</select>
+	
+	<select id="selectTotalElementStatic" parameterType="map" resultType="com.inzent.ecm.vo.StaticVO">
+		SELECT 
+		NVL(SUM(CASE WHEN STATUS >= '00' THEN COUNT END), 0) AS targetCount,
+		NVL(SUM(CASE WHEN STATUS >= '01' THEN COUNT END), 0) AS processCount,
+		NVL(SUM(CASE WHEN STATUS = '00' THEN COUNT END), 0) AS waitCount,
+		NVL(SUM(CASE WHEN STATUS = '01' THEN COUNT END), 0) AS successCount,
+		NVL(SUM(CASE WHEN STATUS > '01' THEN COUNT END), 0) AS failCount
+		FROM XCSM_STATIC
+		WHERE 1=1
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		AND STATDATE IS NOT NULL
+	</select>
+	
+	
+</mapper>

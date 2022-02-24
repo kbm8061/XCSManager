@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.UserDAO">
+	<select id="selectUser" parameterType="com.inzent.ecm.vo.UserVO" resultType="com.inzent.ecm.vo.UserVO">
+		SELECT USERID AS userId, USERNAME AS userName, PASSWD AS passWD, REGDATE AS regDate, USEYN AS useYN
+		FROM XCSM_USER
+		<trim prefix="WHERE">
+			USERID = #{userId} AND PASSWD = #{passWD}
+		</trim>
+		ORDER BY REGDATE
+	</select>
+	
+	<select id="selectUserList" parameterType="com.inzent.ecm.vo.UserVO" resultType="com.inzent.ecm.vo.UserVO">
+		SELECT USERID AS userId, USERNAME AS userName, USERPW AS userPw, REGDATE AS regDate, USEYN AS useYN
+		FROM XCSM_USER
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="userId != null and userId != ''">
+				USERID = #{userId} 
+			</if>
+			<if test="userName != null and userName != ''">
+				AND USERNAME = #{userName}
+			</if>
+			<if test="locked != null and locked != ''">
+				AND LOCKED = #{locked}
+			</if>
+		</trim>
+	</select> 
+	
+	<insert id="insertUser" parameterType="com.inzent.ecm.vo.UserVO">
+		INSERT INTO XCSM_USER (USERID, USERNAME, USERPW, LOCKED, REGDATE, CHANGEDATE)
+		VALUES (#{userId}, #{userName}, #{userPw}, 0, SYSDATE, SYSDATE)
+	</insert>
+	
+	<update id="updateUser" parameterType="com.inzent.ecm.vo.UserVO">
+		UPDATE XCSM_USER
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="userName != null and userName != ''">
+				, USERNAME = #{userName}
+			</if>
+			<if test="userPw != null and userPw != ''">
+				, USERPW = #{userPw}
+			</if>
+			<if test="locked != null and locked != ''">
+				, LOCKED = #{locked}
+			</if>
+			<if test="locked == 0">
+				, LOCKED = 0
+			</if>
+			<if test="(userId != null and userId != '') or
+				(userName != null and userName != '') or
+				(userPw != null and userPw != '') or
+				(locked != null and locked != '')">
+				, CHANGEDATE = SYSDATE
+			</if>
+		</trim>
+		WHERE USERID = #{userId}
+	</update>
+	
+	<delete id="deleteUser" parameterType="com.inzent.ecm.vo.UserVO">
+		DELETE FROM XCSM_USER
+		WHERE USERID = #{userId}
+	</delete>
+</mapper>

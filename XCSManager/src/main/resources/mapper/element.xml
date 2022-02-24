@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.ElementDAO">
+	<select id="selectElementCount" parameterType="com.inzent.ecm.vo.ElementVO" resultType="int">
+		SELECT COUNT(1) AS CNT
+		FROM XCSM_ELEMENT
+		WHERE 1=1
+		<if test="indexKey == null or indexKey == ''">
+			<if test="elementId == null or elementId == ''">
+				<if test="regDate != null and regDate != ''">
+					AND REGDATE BETWEEN #{startDay} AND #{endDay}
+				</if>
+				<if test="processDate != null and processDate != ''">
+					AND PROCESSDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+				</if>
+				<if test="classification != null and classification != ''">
+					AND CLASSIFICATION = #{classification}
+				</if>
+				<if test="status != null and status != ''">
+					AND STATUS = #{status}
+				</if>
+			</if>
+		</if>
+		<if test="indexKey != null and indexKey != ''">
+			AND INDEXKEY = #{indexKey}
+		</if>
+		<if test="elementId != null and elementId != ''">
+			AND ELEMENTID = RPAD(#{elementId}, 16, ' ')
+		</if>
+		<if test="owner != null and owner != ''">
+			AND OWNER = #{owner}
+		</if>
+	</select>
+	
+	<select id="selectElementList" parameterType="com.inzent.ecm.vo.ElementVO" resultType="com.inzent.ecm.vo.ElementVO">
+		SELECT B.*
+		FROM
+		(
+		    SELECT ROWNUM AS RNUM, A.*
+		    FROM 
+		    (
+				SELECT INDEXKEY AS indexKey, ELEMENTID AS elementId, OWNER AS owner, VOLUMEID AS volumeId, FILEPATH AS filePath, CLASSIFICATION AS classification, STATUS AS status, REGDATE AS regDate, PROCESSDATE AS processDate, HISTORYID AS historyId
+				FROM XCSM_ELEMENT
+				WHERE 1=1
+				<if test="indexKey == null or indexKey == ''">
+					<if test="elementId == null or elementId == ''">
+						<if test="regDate != null and regDate != ''">
+							AND REGDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+						</if>
+						<if test="processDate != null and processDate != ''">
+							AND PROCESSDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+						</if>
+						<if test="classification != null and classification != ''">
+							AND CLASSIFICATION = #{classification}
+						</if>
+						<if test="status != null and status != ''">
+							AND STATUS = #{status}
+						</if>
+					</if>
+				</if>
+				<if test="indexKey != null and indexKey != ''">
+					AND INDEXKEY = #{indexKey}
+				</if>
+				<if test="elementId != null and elementId != ''">
+					AND ELEMENTID = RPAD(#{elementId}, 16, ' ')
+				</if>
+				<if test="owner != null and owner != ''">
+					AND OWNER = #{owner}
+				</if>
+				ORDER BY REGDATE DESC
+			) A
+			WHERE ROWNUM <![CDATA[<]]> = #{endNo}
+		) B
+		WHERE B.RNUM <![CDATA[>]]> = #{startNo}
+	</select>
+	
+	
+	<select id="selectFunctionElementCount" parameterType="com.inzent.ecm.vo.ElementVO" resultType="int">
+		SELECT COUNT(1) AS CNT
+		FROM XCSM_ELEMENT
+		WHERE 1=1
+		<if test="regDate != null and regDate != ''">
+			AND REGDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+		</if>
+		<if test="processDate != null and processDate != ''">
+			AND PROCESSDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+		</if>
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		<if test="status != null and status != ''">
+			AND STATUS = #{status}
+		</if>
+		<if test="indexKey != null and indexKey != ''">
+			AND INDEXKEY = #{indexKey}
+		</if>
+		<if test="elementId != null and elementId != ''">
+			AND ELEMENTID = RPAD(#{elementId}, 16, ' ')
+		</if>
+		<if test="owner != null and owner != ''">
+			AND OWNER = #{owner}
+		</if>
+	</select>
+	
+	<select id="selectFunctionElementList" parameterType="com.inzent.ecm.vo.ElementVO" resultType="com.inzent.ecm.vo.ElementVO">
+		SELECT B.*
+		FROM
+		(
+			SELECT ROWNUM AS RNUM, A.*
+			FROM
+			(
+				SELECT INDEXKEY AS indexKey, ELEMENTID AS elementId, OWNER AS owner, VOLUMEID AS volumeId, FILEPATH AS filePath, CLASSIFICATION AS classification, STATUS AS status, REGDATE AS regDate, PROCESSDATE AS processDate, HISTORYID AS historyId
+				FROM XCSM_ELEMENT
+				WHERE 1=1
+				<if test="regDate != null and regDate != ''">
+					AND REGDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+				</if>
+				<if test="processDate != null and processDate != ''">
+					AND PROCESSDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+				</if>
+				<if test="classification != null and classification != ''">
+					AND CLASSIFICATION = #{classification}
+				</if>
+				<if test="status != null and status != ''">
+					AND STATUS = #{status}
+				</if>
+				<if test="indexKey != null and indexKey != ''">
+					AND INDEXKEY = #{indexKey}
+				</if>
+				<if test="elementId != null and elementId != ''">
+					AND ELEMENTID = RPAD(#{elementId}, 16, ' ')
+				</if>
+				<if test="owner != null and owner != ''">
+					AND OWNER = #{owner}
+				</if>
+				ORDER BY REGDATE DESC
+			) A
+			WHERE ROWNUM <![CDATA[<]]> = #{endNo}
+		) B
+		WHERE 1=1
+		AND B.RNUM <![CDATA[>]]> = #{startNo}
+	</select>
+	
+	<select id="selectExcelElementList" parameterType="com.inzent.ecm.vo.ElementVO" resultType="com.inzent.ecm.vo.ElementVO">
+		SELECT
+			ELEMENTID AS elementId,
+			INDEXKEY AS indexKey,
+			OWNER AS owner,
+			CLASSIFICATION AS classification,
+			STATUS AS status,
+			ERRCODE AS errCode,
+			MAPPINGTABLEINFO mappingTableInfo,
+			VOLUMEID AS volumeId,
+			FILEPATH AS filePath,
+			REGUSER AS regUser,
+			CRTDATE AS crtDate,
+			REGDATE AS regDate,
+			PROCESSDATE AS processDate,
+			HISTORYID AS historyId,
+			REALTIMEYN AS realtimeYn,
+			SPDATE AS spDate,
+			RVDATE AS rvDate,
+			DELETEDAY AS deleteDay
+		FROM XCSM_ELEMENT
+		WHERE 1=1
+		<if test="regDate != null and regDate != ''">
+			AND REGDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+		</if>
+		<if test="processDate != null and processDate != ''">
+			AND PROCESSDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+		</if>
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		<if test="status != null and status != ''">
+			AND STATUS = #{status}
+		</if>
+		<if test="indexKey != null and indexKey != ''">
+			AND INDEXKEY = #{indexKey}
+		</if>
+		<if test="elementId != null and elementId != ''">
+			AND ELEMENTID = RPAD(#{elementId}, 16, ' ')
+		</if>
+		<if test="owner != null and owner != ''">
+			AND OWNER = #{owner}
+		</if>
+		ORDER BY REGDATE DESC
+	</select>
+</mapper>

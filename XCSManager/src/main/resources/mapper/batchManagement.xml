@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.BatchManagementDAO">
+	
+	<select id="selectManagementBatchCount" parameterType="com.inzent.ecm.vo.BatchManagementVO" resultType="int">
+		SELECT COUNT(1) AS CNT
+		FROM XCSM_AGENT
+	</select>
+	
+	<select id="selectManagementBatchList" parameterType="com.inzent.ecm.vo.BatchManagementVO" resultType="com.inzent.ecm.vo.BatchManagementVO">
+		SELECT SERVER AS server, AGENT AS agent, THREADCNT AS threadCnt, RUNYN AS runYn
+		FROM (
+			SELECT ROWNUM AS RN, SERVER AS server, AGENT AS agent, THREADCNT AS threadCnt, RUNYN AS runYn
+			FROM XCSM_AGENT
+		)
+		WHERE 1=1
+		AND RN BETWEEN #{startNo} AND #{endNo}
+	</select>
+	
+	<insert id="insertBatch" parameterType="com.inzent.ecm.vo.BatchManagementVO">
+		INSERT INTO XCSM_AGENT (SERVER, AGENT, THREADCNT, RUNYN)
+		VALUES (#{server}, #{agent}, #{threadCnt}, #{runYn})
+	</insert>
+	
+	<update id="updateBatch" parameterType="com.inzent.ecm.vo.BatchManagementVO">
+		UPDATE XCSM_AGENT
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="threadCnt != null and threadCnt != ''">
+				, THREADCNT = #{threadCnt}
+			</if>
+			<if test="runYn != null and runYn != ''">
+				, RUNYN = #{runYn}
+			</if>
+		</trim>
+		WHERE SERVER = #{server} AND AGENT = #{agent}
+	</update>
+	
+	<delete id="deleteBatch" parameterType="com.inzent.ecm.vo.BatchManagementVO">
+		DELETE FROM XCSM_AGENT
+		WHERE SERVER = #{server} AND AGENT = #{agent}
+	</delete>
+</mapper>

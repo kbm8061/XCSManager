@@ -1,0 +1,11 @@
+.table-card {
+	overflow-x: auto;
+}
+
+.table-card table {
+	cursor: default;
+}
+
+.text-normal {
+	font-size: 12px !important;
+}

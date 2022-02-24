@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+	<shutdownHook />
+	
+	<logger name="jdbc" level="off" />
+	<logger name="jdbc.connection" level="off" />
+	<logger name="jdbc.sqlonly" level="off" />
+	<logger name="jdbc.sqltiming" level="info" /> 
+	<logger name="jdbc.audit" level="off" />
+	<logger name="jdbc.resultset" level="off" />
+	<logger name="jdbc.resultsettable" level="off" />
+	
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%logger] - %replace(%msg){'[\r\n]+', ''} %n</Pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>C:/logs/XCSManager.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>C:/logs/XCSManager-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} %level [%logger] - %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+	
+	<logger name="com.inzent.ecm" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+<!-- 	
+	<logger name="com.inzent.ecm.controller" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+	
+	<logger name="com.inzent.ecm.service.DAO" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+
+	<logger name="org.mybatis">
+		<level value="INFO" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+
+	<logger name="org.apache">
+		<level value="INFO" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+
+	<logger name="org.quartz">
+		<level value="INFO" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+ -->
+	<logger name="org.springframework">
+		<level value="INFO" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</logger>
+
+	<root level="DEBUG">
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</root>
+</configuration>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.RealtimeProcessDAO">
+
+	<update id="setRealtime" parameterType="com.inzent.ecm.vo.RealtimeProcessVO">
+		UPDATE XCSM_ELEMENT
+		SET REALTIMEYN = 'Y'
+		WHERE ELEMENTID IN
+		<foreach item="item" index="index" collection="elementId" open="(" close=")" separator=",">
+			 #{item}
+		</foreach>
+	</update>
+	
+	<update id="setStandBy" parameterType="com.inzent.ecm.vo.RealtimeProcessVO">
+		UPDATE XCSM_ELEMENT
+		SET STATUS = '00', PROCESSDATE = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+		WHERE ELEMENTID IN
+		<foreach item="item" index="index" collection="elementId" open="(" close=")" separator=",">
+			 #{item}
+		</foreach>
+	</update>
+</mapper>

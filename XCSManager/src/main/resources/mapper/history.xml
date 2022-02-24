@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.HistoryDAO">
+	<select id="selectHistoryCount" parameterType="com.inzent.ecm.vo.HistoryVO" resultType="map">
+		SELECT COUNT(HISTORYID) AS count
+		FROM XCSM_HISTORY
+		<trim prefix="WHERE">
+			<include refid="whereHistory"/>
+		</trim>
+	</select>
+
+	<select id="selectHistoryList" parameterType="com.inzent.ecm.vo.HistoryVO" resultType="com.inzent.ecm.vo.HistoryVO">
+		SELECT *
+		FROM
+		(
+			SELECT ROWNUM AS NO, HISTORYID AS historyId,
+				TO_CHAR(TO_DATE(HISTORYDATE, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS') AS historyDate,
+				(SELECT CODEVALUE FROM XCSM_CODE CODE WHERE CODE = STATUS) AS status,
+				PROCESSCOUNT AS processCount, SUCCESSCOUNT AS SUCCESSCOUNT
+			FROM XCSM_HISTORY
+			<trim prefix="WHERE">
+				<include refid="whereHistory"/>
+				AND ROWNUM <![CDATA[<=]]> #{endNo}
+			</trim>
+			ORDER BY HISTORYDATE
+		)
+		WHERE
+			#{startNo} <![CDATA[<=]]> NO  
+	</select>
+	
+	<sql id="whereHistory">
+		HISTORYDATE <![CDATA[>=]]> RPAD(#{startDay}, 14, '0') AND HISTORYDATE <![CDATA[<=]]> RPAD(#{endDay}, 14, '9')
+		<if test="historyId != null and historyId != ''">
+			AND HISTORYID = #{historyId}
+		</if>
+		<if test="status != null and status != ''">
+			AND STATUS LIKE #{status} || '%'
+		</if>
+	</sql>
+	
+	<select id="selectHistoryErrLogCount" parameterType="com.inzent.ecm.vo.ErrLogVO" resultType="map">
+		SELECT COUNT(*) AS count
+		FROM XCSM_ERRLOG
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<include refid="whereHistoryErrLog"/>
+		</trim>
+	</select>
+	
+	<select id="selectHistoryErrLogList" parameterType="com.inzent.ecm.vo.ErrLogVO" resultType="com.inzent.ecm.vo.ErrLogVO">
+		SELECT *
+		FROM
+		(
+			SELECT ROWNUM AS NO, ELEMENTID AS elementId, HISTORYID AS historyId, VOLUMEID AS volumeId,
+				(SELECT CODEVALUE FROM XCSM_CODE CODE WHERE CODE = CLASSIFICATION) AS classification,
+				TO_CHAR(TO_DATE(LOGREGDATE, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS') AS logRegDate,
+				ERRMESSAGE AS errMessage
+			FROM XCSM_ERRLOG
+			<trim prefix="WHERE" prefixOverrides="AND">
+				<include refid="whereHistoryErrLog"/>
+				AND ROWNUM <![CDATA[<=]]> #{endNo}
+			</trim>
+			ORDER BY LOGREGDATE
+		)
+		WHERE
+			#{startNo} <![CDATA[<=]]> NO  
+	</select>
+	
+	<sql id="whereHistoryErrLog">
+		<if test="elementId != null and elementId != ''">
+			AND ELEMENTID = #{elementId}
+		</if>
+		<if test="historyId != null and historyId != ''">
+			AND HISTORYID = #{historyId}
+		</if>
+		<if test="volumeId != null and volumeId != ''">
+			AND VOLUMEID = #{volumeId}
+		</if>
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+	</sql>
+</mapper>

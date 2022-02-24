@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.PerformanceDAO">
+	<select id="selectPerformanceCount" parameterType="com.inzent.ecm.vo.PerformanceVO" resultType="int">
+		SELECT COUNT(1) AS COUNT
+		FROM
+		(
+			SELECT
+			<if test="timeDiv == 'MIN'">
+				SUBSTR(PROCESSDATE, 1, 12)
+			</if>
+			<if test="timeDiv == 'HOUR'">
+				SUBSTR(PROCESSDATE, 1, 10)
+			</if>
+			FROM XCSM_ELEMENT
+			WHERE 1=1
+			AND STATUS IN ('01', '09')
+			<if test="startDay != null and startDay != '' and endDay != null and endDay != ''">
+				AND PROCESSDATE BETWEEN #{startDay} AND #{endDay}
+			</if>
+			<if test="classification != null and classification != ''">
+				AND CLASSIFICATION = #{classification}
+			</if>
+			GROUP BY
+			<if test="timeDiv == 'MIN'">
+				SUBSTR(PROCESSDATE, 1, 12)
+			</if>
+			<if test="timeDiv == 'HOUR'">
+				SUBSTR(PROCESSDATE, 1, 10)
+			</if>
+		)
+	</select>
+	
+	<select id="selectPerformanceListPaging" parameterType="com.inzent.ecm.vo.PerformanceVO" resultType="com.inzent.ecm.vo.PerformanceVO">
+		SELECT
+		PROCESSDATE, CLASSIFICATION, COUNT
+		FROM
+		(
+			SELECT ROWNUM RN, PROCESSDATE, CLASSIFICATION, COUNT
+			FROM
+			(
+				SELECT
+				<if test="timeDiv == 'MIN'">
+					SUBSTR(PROCESSDATE, 1, 12) AS PROCESSDATE,
+				</if>
+				<if test="timeDiv == 'HOUR'">
+					SUBSTR(PROCESSDATE, 1, 10) AS PROCESSDATE,
+				</if>
+				CLASSIFICATION, COUNT(*) AS COUNT
+				FROM XCSM_ELEMENT
+				WHERE 1=1
+				AND STATUS IN ('01', '09')
+				<if test="startDay != null and startDay != '' and endDay != null and endDay != ''">
+					AND PROCESSDATE BETWEEN #{startDay} AND #{endDay}
+				</if>
+				<if test="classification != null and classification != ''">
+					AND CLASSIFICATION = #{classification}
+				</if>
+				GROUP BY
+				<if test="timeDiv == 'MIN'">
+					SUBSTR(PROCESSDATE, 1, 12),
+				</if>
+				<if test="timeDiv == 'HOUR'">
+					SUBSTR(PROCESSDATE, 1, 10),
+				</if>
+				CLASSIFICATION
+				ORDER BY PROCESSDATE ASC
+			)
+		)
+		WHERE 1=1
+		AND RN BETWEEN #{startNo} AND #{endNo}
+	</select>
+	
+	<select id="selectPerformanceList" parameterType="com.inzent.ecm.vo.PerformanceVO" resultType="com.inzent.ecm.vo.PerformanceVO">
+		SELECT
+		<if test="timeDiv == 'MIN'">
+			SUBSTR(PROCESSDATE, 1, 12) AS PROCESSDATE,
+		</if>
+		<if test="timeDiv == 'HOUR'">
+			SUBSTR(PROCESSDATE, 1, 10) AS PROCESSDATE,
+		</if>
+		CLASSIFICATION, COUNT(*) AS COUNT
+		FROM XCSM_ELEMENT
+		WHERE 1=1
+		AND STATUS IN ('01', '09')
+		<if test="startDay != null and startDay != '' and endDay != null and endDay != ''">
+			AND PROCESSDATE BETWEEN #{startDay} AND #{endDay}
+		</if>
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		GROUP BY
+		<if test="timeDiv == 'MIN'">
+			SUBSTR(PROCESSDATE, 1, 12),
+		</if>
+		<if test="timeDiv == 'HOUR'">
+			SUBSTR(PROCESSDATE, 1, 10),
+		</if>
+		CLASSIFICATION
+		ORDER BY PROCESSDATE ASC
+	</select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.ErrorHistoryDAO">
+	<select id="selectErrorHistoryCount" parameterType="com.inzent.ecm.vo.ErrorHistoryVO" resultType="int">
+		SELECT COUNT(1) AS CNT
+		FROM XCSM_ERRLOG
+		WHERE 1=1
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		<if test="logRegDate != null and logRegDate != ''">
+			AND LOGREGDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+		</if>
+	</select>
+	
+	
+	<select id="selectBatchHistoryList" parameterType="com.inzent.ecm.vo.ErrorHistoryVO" resultType="com.inzent.ecm.vo.ErrorHistoryVO">
+		SELECT ELEMENTID AS elementId, CLASSIFICATION AS classification, STATUS AS status, ERRCODE AS errCode, HISTORYID AS historyId, VOLUMEID AS volumeId, LOGREGDATE AS logRegDate, ERRMESSAGE AS errMessage
+		FROM
+		(
+			SELECT ROWNUM AS RNUM, A.*
+			FROM
+			(
+				SELECT ELEMENTID AS elementId, CLASSIFICATION AS classification, STATUS AS status, ERRCODE AS errCode, HISTORYID AS historyId, VOLUMEID AS volumeId, LOGREGDATE AS logRegDate, ERRMESSAGE AS errMessage
+				FROM XCSM_HISTORY
+				WHERE 1=1
+				<if test="classification != null and classification != ''">
+					AND CLASSIFICATION = #{classification}
+				</if>
+				<if test="logRegDate != null and logRegDate != ''">
+					AND LOGREGDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+				</if>
+				ORDER BY LOGREGDATE DESC
+			) A
+			WHERE ROWNUM <![CDATA[<]]> = #{endNo}
+		) B
+		WHERE B.RNUM <![CDATA[>]]> = #{startNo}
+	</select>
+</mapper>

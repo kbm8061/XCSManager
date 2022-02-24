@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.BatchHistoryDAO">
+	<select id="selectBatchHistoryCount" parameterType="com.inzent.ecm.vo.BatchHistoryVO" resultType="int">
+		SELECT COUNT(1) AS CNT
+		FROM XCSM_HISTORY
+		WHERE 1=1
+		<if test="classification != null and classification != ''">
+			AND CLASSIFICATION = #{classification}
+		</if>
+		<if test="historyDate != null and historyDate != ''">
+			AND HISTORYDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+		</if>
+	</select>
+	
+	
+	<select id="selectBatchHistoryList" parameterType="com.inzent.ecm.vo.BatchHistoryVO" resultType="com.inzent.ecm.vo.BatchHistoryVO">
+		SELECT HISTORYID AS historyId, HISTORYDATE AS historyDate, CLASSIFICATION AS classification, PROCESSCOUNT AS processCount, SUCCESSCOUNT AS successCount
+		FROM
+		(
+			SELECT ROWNUM RN, HISTORYID AS historyId, HISTORYDATE AS historyDate, CLASSIFICATION AS classification, PROCESSCOUNT AS processCount, SUCCESSCOUNT AS successCount
+			FROM
+			(
+				SELECT HISTORYID AS historyId, HISTORYDATE AS historyDate, CLASSIFICATION AS classification, PROCESSCOUNT AS processCount, SUCCESSCOUNT AS successCount
+				FROM XCSM_HISTORY
+				WHERE 1=1
+				<if test="classification != null and classification != ''">
+					AND CLASSIFICATION = #{classification}
+				</if>
+				<if test="historyDate != null and historyDate != ''">
+					AND HISTORYDATE BETWEEN #{startDay} || '000000' AND #{endDay} || '235959'
+				</if>
+				ORDER BY HISTORYDATE DESC
+			)
+		)
+		WHERE 1=1
+		AND RN BETWEEN #{startNo} AND #{endNo}
+	</select>
+</mapper>

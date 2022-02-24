@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../xml/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.inzent.ecm.service.dao.CodeManagementDAO">
+	<select id="selectCodeList" parameterType="com.inzent.ecm.vo.CodeManagementVO" resultType="com.inzent.ecm.vo.CodeManagementVO">
+		SELECT *
+		FROM XCSM_CODE
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<choose>
+				<when test="codeGroup == 'ALL'">
+					AND CODEGROUP IN ('SP', 'RV', 'DT')
+				</when>
+				<otherwise>
+					<if test="codeGroup != null and codeGroup != ''">
+						AND CODEGROUP = #{codeGroup}
+					</if>
+				</otherwise>
+			</choose>
+			<if test="code != null and code != ''">
+				AND CODE = #{code}
+			</if>
+			<if test="codeValue != null and codeValue != ''">
+				AND CODEVALUE = #{codeValue}
+			</if>
+			<if test="descr != null and descr != ''">
+				AND DESCR = #{descr}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="selectManagementCodeCount" parameterType="com.inzent.ecm.vo.CodeManagementVO" resultType="int">
+		SELECT COUNT(1) AS CNT
+		FROM XCSM_CODE
+	</select>
+	
+	<select id="selectManagementCodeList" parameterType="com.inzent.ecm.vo.CodeManagementVO" resultType="com.inzent.ecm.vo.CodeManagementVO">
+		SELECT CODEGROUP AS codeGroup, CODE AS code, CODEVALUE AS codeValue, DESCR AS descr
+		FROM (
+			SELECT ROWNUM AS RN, CODEGROUP AS codeGroup, CODE AS code, CODEVALUE AS codeValue, DESCR AS descr
+			FROM XCSM_CODE
+		)
+		WHERE 1=1
+		AND RN BETWEEN #{startNo} AND #{endNo}
+	</select>
+	
+	<insert id="insertCode" parameterType="com.inzent.ecm.vo.CodeManagementVO">
+		INSERT INTO XCSM_CODE (CODEGROUP, CODE, CODEVALUE, DESCR)
+		VALUES (#{codeGroup}, #{code}, #{codeValue}, #{descr})
+	</insert>
+	
+	<update id="updateCode" parameterType="com.inzent.ecm.vo.CodeManagementVO">
+		UPDATE XCSM_CODE
+		<trim prefix="SET" prefixOverrides=",">
+			<if test="codeGroup != null and codeGroup != ''">
+				, CODEGROUP = #{codeGroup}
+			</if>
+			<if test="codeValue != null and codeValue != ''">
+				, CODEVALUE = #{codeValue}
+			</if>
+			<if test="descr != null and descr != ''">
+				, DESCR = #{descr}
+			</if>
+		</trim>
+		WHERE CODE = #{code}
+	</update>
+	
+	<delete id="deleteCode" parameterType="com.inzent.ecm.vo.CodeManagementVO">
+		DELETE FROM XCSM_CODE
+		WHERE CODE = #{code}
+	</delete>
+</mapper>
