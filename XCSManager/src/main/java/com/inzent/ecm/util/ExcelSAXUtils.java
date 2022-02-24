@@ -18,9 +18,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-public class ExcelSheetHandlerUtils implements SheetContentsHandler {
+public class ExcelSAXUtils implements SheetContentsHandler {
 	private int currentCol = -1;
-	private int currRowNum = 0;
+	private int currentRow = 0;
 
 	String filePath = "";
 
@@ -28,9 +28,9 @@ public class ExcelSheetHandlerUtils implements SheetContentsHandler {
 	private List<String> row = new ArrayList<String>();
 	private List<String> header = new ArrayList<String>();
 
-	public static ExcelSheetHandlerUtils readExcel(File file) throws Exception {
+	public static ExcelSAXUtils readExcel(File file) throws Exception {
 
-		ExcelSheetHandlerUtils sheetHandler = new ExcelSheetHandlerUtils();
+		ExcelSAXUtils sheetHandler = new ExcelSAXUtils();
 		
 		try {
 			OPCPackage opc = OPCPackage.open(file);
@@ -49,9 +49,8 @@ public class ExcelSheetHandlerUtils implements SheetContentsHandler {
 			
 			inputStream.close();
 			opc.close();
-
 		} catch (Exception e) {
-			throw new Exception();
+			throw new Exception(e.getMessage());
 		}
 		return sheetHandler;
 	}
@@ -63,7 +62,7 @@ public class ExcelSheetHandlerUtils implements SheetContentsHandler {
 	@Override
 	public void startRow(int rowNum) {
 		this.currentCol = -1;
-		this.currRowNum = rowNum;
+		this.currentRow = rowNum;
 	}
 
 	@Override

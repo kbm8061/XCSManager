@@ -48,11 +48,11 @@ $(function() {
 		}
 	})
 
-	$("#sbRefresh").on("click", function() {
+	$(".sbRefresh").on("click", function() {
 		standBy();
 	});
 
-	$("#emRefresh").on("click", function() {
+	$(".emRefresh").on("click", function() {
 		element();
 	});
 });
@@ -217,7 +217,7 @@ const element = function() {
 };
 
 const emChart = function(data) {
-	$('.card-header-title').text('( ' + DateFormat(emJson.startDay) + ' ~ ' + DateFormat(emJson.endDay) + " )");
+	$('#processLogDate').text('( ' + DateFormat(emJson.startDay) + ' ~ ' + DateFormat(emJson.endDay) + " )");
 
 	let chartData = [];
 	let target = $('#dtChartBar');

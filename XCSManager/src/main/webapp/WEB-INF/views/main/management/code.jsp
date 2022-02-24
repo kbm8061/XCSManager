@@ -13,8 +13,8 @@
 			<table width="80%" class="table table-striped table-bordered table-hover text-normal" id="codeTable">
 				<thead>
 					<tr style="text-align:center;">
-						<th nowrap>코드 그룹</th>
 						<th nowrap>코드</th>
+						<th nowrap>코드 그룹</th>
 						<th nowrap>코드 값</th>
 						<th nowrap>코드 설명</th>
 					</tr>

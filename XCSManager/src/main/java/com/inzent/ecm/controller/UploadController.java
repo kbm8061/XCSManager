@@ -39,80 +39,95 @@ public class UploadController {
 	private ElementService elementService;
 
 	@RequestMapping(value = "/uploadExcel")
-	public ModelAndView uploadExcel(HttpServletRequest request) throws Exception {
+	public ModelAndView uploadExcel(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("jsonView");
-		
-		int ret = uploadService.insertExcel(request, propertiesVO);
-		
-		if (ret > 0) {
-			int listCount = 0;
-			
-			ElementVO vo = new ElementVO();
-			
-			vo.setClassification(request.getParameter("classification"));
-			vo.setStatus("00");
-			vo.setStartNo(Integer.parseInt(request.getParameter("startNo")));
-			vo.setEndNo(Integer.parseInt(request.getParameter("endNo")));
-			vo.setSelectCount(Integer.parseInt(request.getParameter("selectCount")));
-			
-			if (vo.getStartNo() == 1 && vo.getSelectCount() == 0) {
-				listCount = elementService.selectElementCount(vo);
 
-				if (listCount > 0) {
+		try {
+			int ret;
+			
+			ret = uploadService.insertExcel(request, propertiesVO);
+			
+			if (ret > 0) {
+				int listCount = 0;
+				
+				ElementVO vo = new ElementVO();
+				
+				vo.setClassification(request.getParameter("classification"));
+				vo.setStatus("00");
+				vo.setStartNo(Integer.parseInt(request.getParameter("startNo")));
+				vo.setEndNo(Integer.parseInt(request.getParameter("endNo")));
+				vo.setSelectCount(Integer.parseInt(request.getParameter("selectCount")));
+				
+				if (vo.getStartNo() == 1 && vo.getSelectCount() == 0) {
+					listCount = elementService.selectElementCount(vo);
+
+					if (listCount > 0) {
+						List<ElementVO> elementList = elementService.selectElementList(vo);
+
+						mav.addObject("elementCount", listCount);
+						mav.addObject("elementList", elementList);
+					} else {
+						mav.addObject("msg", "조회 된 목록이 없습니다.");
+					}
+				} else {
 					List<ElementVO> elementList = elementService.selectElementList(vo);
 
-					mav.addObject("elementCount", listCount);
 					mav.addObject("elementList", elementList);
-				} else {
-					mav.addObject("msg", "조회 된 목록이 없습니다.");
 				}
-			} else {
-				List<ElementVO> elementList = elementService.selectElementList(vo);
-
-				mav.addObject("elementList", elementList);
 			}
+		} catch (Exception e) {
+			mav.addObject("msg", e.getMessage());
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return mav;
 	}
 
 	@RequestMapping(value = "/uploadCSV")
-	public ModelAndView uploadCSV(HttpServletRequest request) throws Exception {
+	public ModelAndView uploadCSV(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("jsonView");
 		
-		int ret = uploadService.insertCSV(request, propertiesVO);
-		
-		if (ret > 0) {
-			int listCount = 0;
+		try {
+			int ret;
 			
-			ElementVO vo = new ElementVO();
+			ret = uploadService.insertCSV(request, propertiesVO);
 			
-			vo.setClassification(request.getParameter("classification"));
-			vo.setStatus("00");
-			vo.setStartNo(Integer.parseInt(request.getParameter("startNo")));
-			vo.setEndNo(Integer.parseInt(request.getParameter("endNo")));
-			vo.setSelectCount(Integer.parseInt(request.getParameter("selectCount")));
-			
-			if (vo.getStartNo() == 1 && vo.getSelectCount() == 0) {
-				listCount = elementService.selectElementCount(vo);
+			if (ret > 0) {
+				int listCount = 0;
+				
+				ElementVO vo = new ElementVO();
+				
+				vo.setClassification(request.getParameter("classification"));
+				vo.setStatus("00");
+				vo.setStartNo(Integer.parseInt(request.getParameter("startNo")));
+				vo.setEndNo(Integer.parseInt(request.getParameter("endNo")));
+				vo.setSelectCount(Integer.parseInt(request.getParameter("selectCount")));
+				
+				if (vo.getStartNo() == 1 && vo.getSelectCount() == 0) {
+					listCount = elementService.selectElementCount(vo);
 
-				if (listCount > 0) {
+					if (listCount > 0) {
+						List<ElementVO> elementList = elementService.selectElementList(vo);
+
+						mav.addObject("elementCount", listCount);
+						mav.addObject("elementList", elementList);
+					} else {
+						mav.addObject("msg", "조회 된 목록이 없습니다.");
+					}
+				} else {
 					List<ElementVO> elementList = elementService.selectElementList(vo);
 
-					mav.addObject("elementCount", listCount);
 					mav.addObject("elementList", elementList);
-				} else {
-					mav.addObject("msg", "조회 된 목록이 없습니다.");
 				}
-			} else {
-				List<ElementVO> elementList = elementService.selectElementList(vo);
-
-				mav.addObject("elementList", elementList);
 			}
+		} catch (Exception e) {
+			mav.addObject("msg", e.getMessage());
+			logger.error(e.getMessage());
 		}
-		
+
 		return mav;
 	}
 	

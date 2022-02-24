@@ -49,12 +49,6 @@ $(function() {
 <div class="container-fluid p-2" style="height:calc(100% - 5vh) !important;">
 	<div class="d-sm-flex align-items-center justify-content-between mb-1">
         <h4 class="ml-2 mb-0 text-gray-800 font-weight-bold">통계 - 진척조회 (그래프)</h4>
-        
-		<div class="dropdown no-arrow">
-			<a role="button" id="sbRefresh">
-				<i class="fas fa-redo fa-sm fa-fw text-gray-400"></i>
-			</a>
-		</div>
 	</div>
 	
 	<div class="card mb-2 table-card">
@@ -100,6 +94,9 @@ $(function() {
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary"># 전일자 기준 총 <span class="selectClassName">분리보관</span> 처리내역</h6>
+                    <a role="button" class="sbRefresh">
+						<i class="fas fa-redo fa-sm fa-fw text-gray-400"></i>
+					</a>
                 </div>
                 <div class="card-body" id="dtStatCard">
                     <h4 class="small font-weight-bold"><span class="selectClassName">분리보관</span> 총 건수<span class="float-right" id="dtTotalSpan">0 (0%)</span></h4>
@@ -133,8 +130,10 @@ $(function() {
         <div class="col-md-8 col-12" id="standByDivRight">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">#전일자 기준 <span class="selectClassName">분리보관</span> 처리일자별 처리내역</h6>
-                    <h6 class="m-0 font-weight-bold text-primary card-header-title"></h6>
+                    <h6 class="m-0 font-weight-bold text-primary">#전일자 기준 <span class="selectClassName">분리보관</span> 처리일자별 처리내역 <span id="processLogDate"></span></h6>
+                    <a role="button" class="sbRefresh">
+						<i class="fas fa-redo fa-sm fa-fw text-gray-400"></i>
+					</a>
                 </div>
                 <div class="card-body" style="height: 25vh; min-height: 355px;">
 					<canvas id="dtChartBar"></canvas>
@@ -147,7 +146,7 @@ $(function() {
 				<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 					<c:set var="now" value="<%= new java.text.SimpleDateFormat(\"yyyy-MM-dd\").format(new java.util.Date()) %>"></c:set>
 					<h6 class="m-0 font-weight-bold text-primary"># 당일 <span class="selectClassName">분리보관</span> 처리내역 (${now})</h6>
-					<a role="button" id="emRefresh">
+					<a role="button" class="emRefresh">
 						<i class="fas fa-redo fa-sm fa-fw text-gray-400"></i>
 					</a>
 				</div>

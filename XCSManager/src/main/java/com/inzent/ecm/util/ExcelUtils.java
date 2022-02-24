@@ -38,8 +38,8 @@ public class ExcelUtils {
 		if (EXT_XLS.equalsIgnoreCase(ext)) {
 			resultMap = readExcelForXls(filePath);
 		} else if (EXT_XLSX.equalsIgnoreCase(ext)) {
-			resultMap = readExcelForXlsx(filePath);
-//			resultMap = readExcelForSax(filePath);
+//			resultMap = readExcelForXlsx(filePath);
+			resultMap = readExcelForSax(filePath);
 		}
 
 		return resultMap;
@@ -191,7 +191,7 @@ public class ExcelUtils {
 	}
 
 	private ArrayList<ElementVO> readExcelForSax(String filePath) throws Exception {
-		ExcelSheetHandlerUtils excelSheetHandler = ExcelSheetHandlerUtils.readExcel(new File(filePath));
+		ExcelSAXUtils excelSheetHandler = ExcelSAXUtils.readExcel(new File(filePath));
 		List<List<String>> excelDatas = excelSheetHandler.getRows();
 		ArrayList<ElementVO> resultList = new ArrayList<ElementVO>();
 

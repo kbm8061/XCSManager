@@ -112,7 +112,6 @@ $(function() {
 						html += '<td nowrap>' + blankToNull(result.elementList[i].elementId) + '</td>';
 						html += '<td nowrap>' + blankToNull(result.elementList[i].indexKey) + '</td>';
 						html += '<td nowrap>' + blankToNull(result.elementList[i].owner) + '</td>';
-						html += '<td nowrap>' + blankToNull(result.elementList[i].volumeId) + '</td>';
 						html += '<td nowrap>' + blankToNull(result.elementList[i].filePath) + '</td>';
 						html += '<td nowrap>' + blankToNull(result.elementList[i].classification) + '</td>';
 						html += '<td nowrap>' + blankToNull(result.elementList[i].status) + '</td>';
